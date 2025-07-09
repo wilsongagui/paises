@@ -12,6 +12,7 @@ class EcuadorScreen extends StatefulWidget {
 class _EcuadorScreenState extends State<EcuadorScreen> {
   String linkBandera = "";
   String linkEscudo = "";
+  int Linkpoblacion = 0;
 
   Future<void> getData() async {
     final url = Uri.parse("https://restcountries.com/v3.1/name/ecuador");
@@ -20,15 +21,18 @@ class _EcuadorScreenState extends State<EcuadorScreen> {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
-      var flag = data[0]['flags']['png']; // ✅ link bandera
-      var escudo = data[0]['coatOfArms']['png']; // ✅ link escudo
+      var flag = data[0]['flags']['png'];
+      var escudo = data[0]['coatOfArms']['png'];
+      var poblacion = data[0]['population'];
 
       print("Bandera: $flag");
       print("Escudo: $escudo");
+      print("poblacion: $poblacion");
 
       setState(() {
         linkBandera = flag;
         linkEscudo = escudo;
+        Linkpoblacion = poblacion;
       });
     } else {
       print("Error: ${response.statusCode}");
@@ -52,9 +56,14 @@ class _EcuadorScreenState extends State<EcuadorScreen> {
         child: Center(
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              Text(
+                'Población: $Linkpoblacion', // Muestra directamente el int
+                style: const TextStyle(fontSize: 20),
+              ),
+
               const Text(
                 'Bandera de Ecuador',
+
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
@@ -67,7 +76,9 @@ class _EcuadorScreenState extends State<EcuadorScreen> {
                 'Escudo de Ecuador',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
+
               const SizedBox(height: 10),
+
               linkEscudo.isNotEmpty
                   ? Image.network(linkEscudo, width: 300)
                   : const CircularProgressIndicator(),
